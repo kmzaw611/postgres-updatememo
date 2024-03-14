@@ -32,7 +32,6 @@
  * savings to be had anyway, for usual values of INDEX_MAX_KEYS.
  */
 
-int curStamp = 0;
 
 typedef struct IndexTupleData
 {
@@ -49,7 +48,8 @@ typedef struct IndexTupleData
 	 */
 
 	unsigned short t_info;		/* various info about tuple */
-	unsigned int stamp;
+	uint32_t stamp;
+	uint32_t oid;
 
 } IndexTupleData;				/* MORE DATA FOLLOWS AT END OF STRUCT */
 

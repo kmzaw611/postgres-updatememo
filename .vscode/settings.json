@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "tupdesc.h": "c"
+        "tupdesc.h": "c",
+        "postgres.h": "c"
     }
 }
