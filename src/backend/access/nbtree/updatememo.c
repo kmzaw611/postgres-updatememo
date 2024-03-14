@@ -7,10 +7,12 @@ uint32_t curOID = 0;
 
 
 
-//if update memo reaches max
+//if update memo reaches max double its size. AddToMemo should be only function that changes curMemoEntry and curMemoSize
+//
 umEntry **updateMemo;
 int curMemoEntry = 0;
-int curMemoSize = 0;
+int curMemoSize = INITIALMEMOSIZE;
+
 
 
 void initializeMemo(){
@@ -35,7 +37,36 @@ void addToMemo(uint32_t oid, uint32_t stamp, unsigned short nold){
         updateMemo = newUM;
     }
     updateMemo[curMemoEntry] = newUM;
+    curMemoEntr++;
 }
+//This function implements the UM portion of "MemoBasedInsert" from the paper. Call onInsert() in places where postgres inserts tuples
+void onInsert(uint32_t oid){
+    //If we are assigning the oids ourselves, then this function doesn't really work. ignoring that for now, keep in mind for later
+    umEntry * entry = findEntry(oid);
+    //check if oid is there. 
+    if(entry){
+        //fill in
+    }
+    else{
+        //fill in
+    }
+}
+//TRUE = LATEST
+//FALSE = OBSOLETE
+bool checkStatus(IndexTuple itup){
+    umEntry * entry = findEntry(itup.oid);
+    if(!entry){
+        return true;
+    }
+    if(entry->stamp == itup.stamp){
+        return true;
+    }
+    else{
+        return false;
+    }
+
+}
+
 //return um entry with oid. return null if not found. 
 umEntry * findEntry(uint32_t oid){
     for (int i = 0; i < curMemoEntry; i++)
@@ -46,9 +77,15 @@ umEntry * findEntry(uint32_t oid){
     }
     return NULL;
 }
-//call in order to update an entry. Called when update occurs, as we need to update the stampcounter
+//call in order to update an entry. Called when update occurs, as we need to update the stampcounter to the newest one
+//return true if found. Return false if not. 
 bool updateEntry(uint32_t newStamp, uint32_t oid){
-    //loop through update memo to find same one
-    
-
+    umEntry * toUpdate = findEntry(oid);
+    if(toUpdate == NULL){
+        return false;
+    }
+    else{
+        toUpdate->stamp = newStamp;
+        return true;
+    }
 }
