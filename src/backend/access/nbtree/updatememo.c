@@ -43,7 +43,7 @@ void addToMemo(uint32_t oid, uint32_t stamp, unsigned short nold){
 void onInsert(uint32_t oid){
     //If we are assigning the oids ourselves, then this function doesn't really work. ignoring that for now, keep in mind for later
     umEntry * entry = findEntry(oid);
-    //check if oid is there. 
+    //check if oid is there.
     if(entry){
         //fill in
     }
@@ -77,6 +77,7 @@ umEntry * findEntry(uint32_t oid){
     }
     return NULL;
 }
+
 //call in order to update an entry. Called when update occurs, as we need to update the stampcounter to the newest one
 //return true if found. Return false if not. 
 bool updateEntry(uint32_t newStamp, uint32_t oid){
@@ -88,4 +89,36 @@ bool updateEntry(uint32_t newStamp, uint32_t oid){
         toUpdate->stamp = newStamp;
         return true;
     }
+}
+
+// Finds the latest entry
+int findLatest(uint32_t oid) {
+	int index = 0;
+	int max = 0;
+	for (int i = 0; i < curMemoEntry; i++) {
+		if (updateMemo[j]->oid == oid && updateMemo[j]->stamp > max) {
+			index = j;
+			max = updateMemo[j]->stamp;
+		}
+	}
+	return index;
+}
+
+// Cleans the leaf node by removing obsolete entries from the tree and decrementing Nold counter
+void clean(Page leafNode) {
+	for (int i = 0; i < sizeof(leafNode); i++) {
+		IndexTuple tuple = (IndexTuple) leafNode[i];
+		if (!checkStatus(tuple)) {
+			leafNode[i] = null;
+			int latestIndex = findLatest(tuple.oid);
+			int decCounter = 0;
+			for (int j = 0; j < curMemoEntry; j++) {
+				if(updateMemo[j]->oid == tuple.oid && j != latestIndex){
+					updateMemo[j] = NULL
+					decCounter++;
+				}
+			}
+			updateMemo[latestIndex] -= decCounter;
+		}
+	}
 }
