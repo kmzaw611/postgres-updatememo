@@ -49,7 +49,6 @@ typedef struct IndexTupleData
 
 	unsigned short t_info;		/* various info about tuple */
 	uint32_t stamp;
-	uint32_t oid;
 
 } IndexTupleData;				/* MORE DATA FOLLOWS AT END OF STRUCT */
 
